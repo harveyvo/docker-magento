@@ -21,10 +21,15 @@ services:
       - ssldata:/etc/nginx/certs
 
   phpfpm:
-    image: markoshust/magento-php:7.4-fpm-5
+    build:
+      context: images/php/7.4
+      args: *args
+    volumes: *appvolumes
     links:
       - db
-    volumes: *appvolumes
+    env_file: &env
+      - env/magento.env
+      - env/db.env
 
   db:
     image: percona:5.7
@@ -40,30 +45,27 @@ services:
 
   elasticsearch:
     image: markoshust/magento-elasticsearch:7.7.1-0
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
 
   rabbitmq:
     image: rabbitmq:3.7-management-alpine
-    ports:
-      - "15672:15672"
-      - "5672:5672"
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
 
   # Disabling cron by default as it uses higher CPU, enable if needed
-  #cron:
-  #  image: markoshust/magento-php:7.4-fpm-5
-  #  user: root
-  #  command: /usr/local/bin/cronstart
-  #  tty: true
-  #  links:
-  #    - db
-  #  volumes: *appvolumes
+  cron:
+    build:
+      context: images/php/7.4
+      args: *args
+    volumes: *appvolumes
+    links:
+      - db
+    env_file: *env
+    user: root
+    command: /usr/local/bin/cronstart
+    tty: true
 
 volumes:
   appdata:
