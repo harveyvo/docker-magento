@@ -46,15 +46,15 @@ RUN docker-php-ext-install \
   xsl \
   zip
 
-RUN cd /tmp \
-  && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-  && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
-  && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
-  && export PHP_EXT_DIR=$(php-config --extension-dir) \
-  && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
-  && rm -rf ./ioncube \
-  && rm ioncube_loaders_lin_x86-64.tar.gz \
-  && docker-php-ext-enable ioncube
+# RUN cd /tmp \
+#   && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+#   && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
+#   && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
+#   && export PHP_EXT_DIR=$(php-config --extension-dir) \
+#   && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
+#   && rm -rf ./ioncube \
+#   && rm ioncube_loaders_lin_x86-64.tar.gz \
+#   && docker-php-ext-enable ioncube
 
 RUN pecl channel-update pecl.php.net \
   && pecl install xdebug
@@ -94,10 +94,10 @@ RUN mkdir /var/www/.composer-global \
   && composer init --working-dir=/var/www/.composer-global --no-interaction \
   && composer require --working-dir=/var/www/.composer-global markshust/magento2-metapackage-devtools-cli:^1.0
 
-RUN curl -s https://packages.blackfire.io/gpg.key | apt-key add - \
-  && echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
-  && apt-get update \
-  && apt-get install blackfire-agent blackfire-php
+# RUN curl -s https://packages.blackfire.io/gpg.key | apt-key add - \
+#   && echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
+#   && apt-get update \
+#   && apt-get install blackfire-agent blackfire-php
 
 RUN printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/update/cron.php\n' >> /etc/crontab \
   && printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/bin/magento cron:run\n' >> /etc/crontab \
