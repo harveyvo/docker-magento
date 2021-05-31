@@ -12,6 +12,7 @@ services:
       args: &args
         UID: 1000
         GID: 1000
+        XDEBUG: 'true'
     links:
       - phpfpm
     volumes: &appvolumes
@@ -22,7 +23,7 @@ services:
 
   phpfpm:
     build:
-      context: images/php/7.3
+      context: images/php/7.1
       args: *args
     volumes: *appvolumes
     links:

@@ -17,7 +17,7 @@ docker-compose -f docker-compose.yml up -d
 
 bin/clinotty chmod u+x bin/magento
 if [ -d .vscode ]; then
-mv .vscode src
+  mv .vscode src
 fi
 
 echo "Waiting for connection to Elasticsearch..."
@@ -44,11 +44,6 @@ bin/clinotty bin/magento setup:install \
   --language="$MAGENTO_LOCALE" \
   --currency="$MAGENTO_CURRENCY" \
   --timezone="$MAGENTO_TIMEZONE" \
-  --amqp-host=rabbitmq \
-  --amqp-port=5672 \
-  --amqp-user=guest \
-  --amqp-password=guest \
-  --amqp-virtualhost=/ \
   --cache-backend=redis \
   --cache-backend-redis-server=redis \
   --cache-backend-redis-db=0 \
