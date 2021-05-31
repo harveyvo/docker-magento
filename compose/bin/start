@@ -47,6 +47,7 @@ done
 [ $IS_VALID = false ] && echo "Failed to start docker for missing volume files" && exit
 
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d --remove-orphans "$@"
+bin/root bash -c 'chmod 777 /sock/docker.sock'
 
 ## Blackfire support
 # ------------------

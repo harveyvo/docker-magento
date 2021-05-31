@@ -56,9 +56,7 @@ services:
 
   # Disabling cron by default as it uses higher CPU, enable if needed
   cron:
-    build:
-      context: images/php/7.4
-      args: *args
+    build: *php
     volumes: *appvolumes
     links:
       - db
