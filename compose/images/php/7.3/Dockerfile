@@ -1,6 +1,8 @@
 FROM php:7.3-fpm-buster
-MAINTAINER Mark Shust <mark@shust.com>
 
+ARG BLACKFIRE
+ARG ICONCUBE
+ARG XDEBUG
 RUN apt-get update && apt-get install -y \
   cron \
   git \
@@ -45,21 +47,23 @@ RUN docker-php-ext-install \
   sysvshm \
   xsl \
   zip
+RUN if [ "${ICONCUBE}" = 'true' ]; then \
+   cd /tmp \
+   && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+   && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
+   && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
+   && export PHP_EXT_DIR=$(php-config --extension-dir) \
+   && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
+   && rm -rf ./ioncube \
+   && rm ioncube_loaders_lin_x86-64.tar.gz \
+   && docker-php-ext-enable ioncube ;\
+fi;
 
-# RUN cd /tmp \
-#   && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-#   && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
-#   && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
-#   && export PHP_EXT_DIR=$(php-config --extension-dir) \
-#   && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
-#   && rm -rf ./ioncube \
-#   && rm ioncube_loaders_lin_x86-64.tar.gz \
-#   && docker-php-ext-enable ioncube
-
-RUN pecl channel-update pecl.php.net \
-  && pecl install xdebug
-
-RUN docker-php-ext-enable xdebug
+RUN if [ "${XDEBUG}" = 'true' ]; then \
+  pecl channel-update pecl.php.net \
+  && pecl install xdebug \
+  && docker-php-ext-enable xdebug ;\
+  fi;
 
 ## Replace next lines with below commented out version once issue is resolved
 # https://github.com/php/pecl-networking-ssh2/pull/36
@@ -94,10 +98,13 @@ RUN mkdir /var/www/.composer-global \
   && composer init --working-dir=/var/www/.composer-global --no-interaction \
   && composer require --working-dir=/var/www/.composer-global markshust/magento2-metapackage-devtools-cli:^1.0
 
-RUN curl -s https://packages.blackfire.io/gpg.key | apt-key add - \
+RUN if [ "${BLACKFIRE}" = 'true' ]; then \
+  curl -s https://packages.blackfire.io/gpg.key | apt-key add - \
   && echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
   && apt-get update \
-  && apt-get install blackfire-agent blackfire-php
+  && apt-get install blackfire-agent blackfire-php;\
+  fi;
+
 
 RUN printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/update/cron.php\n' >> /etc/crontab \
   && printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/bin/magento cron:run\n' >> /etc/crontab \

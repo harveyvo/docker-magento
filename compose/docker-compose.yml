@@ -12,6 +12,7 @@ services:
       args: &args
         UID: 1000
         GID: 1000
+        XDEBUG: 'true'
     links:
       - phpfpm
     volumes: &appvolumes
@@ -20,7 +21,7 @@ services:
       - sockdata:/sock
       - ssldata:/etc/nginx/certs
 
-  phpfpm:
+  phpfpm: &php
     build:
       context: images/php/7.3
       args: *args
@@ -43,11 +44,11 @@ services:
   redis:
     image: redis:5.0-alpine
 
-  elasticsearch:
-    image: markoshust/magento-elasticsearch:7.7.1-0
-    environment:
-      - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+  # elasticsearch:
+  #   image: markoshust/magento-elasticsearch:7.7.1-0
+  #   environment:
+  #     - "discovery.type=single-node"
+  #     - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
 
   rabbitmq:
     image: rabbitmq:3.7-management-alpine

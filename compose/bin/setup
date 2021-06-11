@@ -20,13 +20,13 @@ if [ -d .vscode ]; then
 mv .vscode src
 fi
 
-echo "Waiting for connection to Elasticsearch..."
-bin/clinotty timeout 30 bash -c "
-    until curl --silent --output /dev/null http://$ES_HOST:$ES_PORT/_cat/health?h=st; do
-        printf '.'
-        sleep 5
-    done"
-[ $? != 0 ] && echo "Failed to connect to Elasticsearch" && exit
+# echo "Waiting for connection to Elasticsearch..."
+# bin/clinotty timeout 30 bash -c "
+#     until curl --silent --output /dev/null http://$ES_HOST:$ES_PORT/_cat/health?h=st; do
+#         printf '.'
+#         sleep 5
+#     done"
+# [ $? != 0 ] && echo "Failed to connect to Elasticsearch" && exit
 
 bin/clinotty bin/magento setup:install \
   --db-host="$MYSQL_HOST" \

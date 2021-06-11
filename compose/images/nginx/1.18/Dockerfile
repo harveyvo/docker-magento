@@ -29,9 +29,9 @@ COPY ./conf/default.conf /etc/nginx/conf.d/
 RUN mkdir -p /etc/nginx/html /var/www/html \
   && chown -R app:app /etc/nginx /var/www /var/cache/nginx /var/run/nginx.pid /sock
 
-EXPOSE 8443
+EXPOSE 443
 
-USER app:app
+USER root
 
 VOLUME /var/www
 
