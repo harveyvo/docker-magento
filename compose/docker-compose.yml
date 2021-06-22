@@ -21,8 +21,8 @@ services:
       - sockdata:/sock
       - ssldata:/etc/nginx/certs
 
-  phpfpm: &php
-    build:
+  phpfpm: 
+    build: &php
       context: images/php/7.3
       args: *args
     volumes: *appvolumes
