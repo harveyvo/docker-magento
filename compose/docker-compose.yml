@@ -23,7 +23,7 @@ services:
 
   phpfpm: 
     build: &php
-      context: images/php/7.3
+      context: images/php/7.2
       args: *args
     volumes: *appvolumes
     links:
