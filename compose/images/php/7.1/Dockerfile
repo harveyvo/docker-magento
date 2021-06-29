@@ -44,7 +44,8 @@ RUN docker-php-ext-install \
   sysvsem \
   sysvshm \
   xsl \
-  zip
+  zip \
+  mcrypt
 
 RUN if [ "${ICONCUBE}" = 'true' ]; then \
    cd /tmp \
