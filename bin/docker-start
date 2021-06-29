@@ -1,0 +1,37 @@
+#!/bin/bash
+function usage
+{
+	printf "\033[1m\r\nUsage: "
+	printf "\033[0mdocker-start <container-name>\r\n"
+ 	printf "\033[1mExample\r\n"
+ 	printf "\e[34m"
+ 	printf "\t docker-start magento2ce.dev\r\n\n"
+ 	printf "\033[0m"
+ 	printf "\r\n"
+
+}
+if [[ $@ == '' ]]; then
+	printf "\r\n"
+	printf "\033[91m\n"
+	echo "Please enter Container ID or Container Name"
+	usage
+	exit
+fi
+
+CID=$(docker start $1)
+CIP=$(docker-ip $CID)
+echo $CID
+if [[ "$CIP" != '' ]]; then
+    CURRENT_IP=$(grep "$1" /etc/hosts | grep -oE '^[0-9.]+')
+    if [[ "$CURRENT_IP" != '' ]]; then 
+        sudo sed -i "s/$CURRENT_IP/$CIP/" /etc/hosts
+    else 
+        sudo sed -i -r "/($1)|($CIP)/d" /etc/hosts
+        sudo sh -c "echo $CIP    $1" >> /etc/hosts
+    fi
+    #sudo service network-manager restart
+    grep "$1" /etc/hosts
+else 
+echo "can't start container"
+fi
+
